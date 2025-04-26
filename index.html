@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en-gb">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>scRNA-seq Reanalysis | Darmanis et al. (2015)</title>
+    <link rel="stylesheet" href="Home.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/umap-js@1.3.1/dist/umap-js.min.js"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>Single-Cell RNA-seq Reanalysis</h1>
+            <p class="subtitle">Darmanis et al. (2015) Human Brain Transcriptome</p>
+        </div>
+    </header>
+
+    <nav class="navbar">
+        <div class="container">
+            <ul>
+                <li><a href="#introduction">Introduction</a></li>
+                <li><a href="#methods">Methods</a></li>
+                <li><a href="#results">Results</a></li>
+                <li><a href="#discussion">Discussion</a></li>
+                <li><a href="#downloads">Downloads</a></li>
+                <li><a href="#github">Code</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section id="introduction" class="section">
+            <h2><i class="fas fa-book-open"></i> Introduction</h2>
+            <div class="content-box">
+                <p>In 2015, <strong>Darmanis et al.</strong> published a seminal study exploring the cellular diversity of the human brain through single-cell RNA sequencing (scRNA-seq), marking a milestone in transcriptomics by providing an unprecedented resolution of cell-type-specific gene expression. The study, titled <em>"A survey of human brain transcriptome diversity at the single cell level"</em>, utilized an early scRNA-seq pipeline to capture transcriptomic profiles from 466 single cells of the adult and fetal human brain.</p>
+                
+                <p>Their findings offered insight into neuronal and non-neuronal transcriptional profiles and notably reported MHC Class I gene expression in adult neurons—a result that challenged existing assumptions.</p>
+                
+                <div class="highlight-box">
+                    <p><strong>Our Objective:</strong> Replicate and extend the analysis using modern tools (Scanpy) to validate findings and demonstrate reproducibility with contemporary pipelines.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="methods" class="section">
+            <h2><i class="fas fa-flask"></i> Materials & Methods</h2>
+            <div class="content-box">
+                <h3>Analysis Pipeline</h3>
+                <div class="pipeline-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <i class="fas fa-database"></i>
+                        <h3>Data Extraction</h3>
+                        <p>Combined raw <code>.csv.gz</code> files into unified gene count matrix using Python's pandas and gzip</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <i class="fas fa-filter"></i>
+                        <h3>Preprocessing</h3>
+                        <p>Quality control, normalization (sc.pp.normalize_total), log transformation (sc.pp.log1p), and HVG selection (top 2000 genes)</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <i class="fas fa-project-diagram"></i>
+                        <h3>Dimensionality Reduction</h3>
+                        <p>PCA (50 components) followed by UMAP embedding (sc.tl.umap) for visualization</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <i class="fas fa-object-group"></i>
+                        <h3>Clustering</h3>
+                        <p>Leiden algorithm (sc.tl.leiden) for community detection in k-nearest neighbor graph</p>
+                    </div>
+                </div>
+                
+                <div class="methods-detail">
+                    <h3>Technical Implementation</h3>
+                    <p>The analysis was performed using <strong>Scanpy 1.9.0</strong> in a Python 3.10 environment. Key parameters:</p>
+                    <ul class="tech-specs">
+                        <li><strong>Normalization:</strong> Total-count normalization per cell</li>
+                        <li><strong>HVG Selection:</strong> Mean/dispersion method (sc.pp.highly_variable_genes)</li>
+                        <li><strong>PCA:</strong> 50 components using ARPACK solver</li>
+                        <li><strong>UMAP:</strong> min_dist=0.5, spread=1.0, n_neighbors=15</li>
+                        <li><strong>Leiden:</strong> Resolution=0.6</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="results" class="section">
+            <h2><i class="fas fa-chart-bar"></i> Results</h2>
+            <div class="content-box">
+                <div class="result-highlight">
+                    <img src="images/umap_clusters.png" alt="UMAP clustering of human brain scRNA-seq data" class="result-image">
+                    <p class="caption">Figure 1: UMAP projection of 466 single cells from human brain tissue. Colors represent distinct clusters identified by Leiden algorithm.</p>
+                </div>
+                
+                <div class="interactive-section">
+                    <h3>Interactive Exploration</h3>
+                    <div class="interactive-container">
+                        <div class="gene-search">
+                            <h4>Gene Expression Query</h4>
+                            <div class="search-box">
+                                <input type="text" id="geneSearch" placeholder="Search gene (e.g., SNAP25, GFAP)">
+                                <button id="searchBtn"><i class="fas fa-search"></i></button>
+                            </div>
+                            <div id="geneResult" class="gene-result"></div>
+                        </div>
+                        
+                        <div class="umap-interactive">
+                            <h4>UMAP Explorer</h4>
+                            <div id="umapViz"></div>
+                            <div class="umap-controls">
+                                <button id="zoomIn"><i class="fas fa-search-plus"></i></button>
+                                <button id="zoomOut"><i class="fas fa-search-minus"></i></button>
+                                <button id="resetView"><i class="fas fa-sync-alt"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="key-findings">
+                    <h3>Key Findings</h3>
+                    <ul>
+                        <li><strong>Clear separation</strong> of neuronal (clusters 0,2,4) vs. non-neuronal cells (clusters 1,3,5)</li>
+                        <li><strong>Reproduction of MHC-I expression</strong> in adult neuronal clusters</li>
+                        <li><strong>Improved resolution</strong> of glial subpopulations compared to original study</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="discussion" class="section">
+            <h2><i class="fas fa-comments"></i> Discussion</h2>
+            <div class="content-box">
+                <p>Our reanalysis of the Darmanis et al. dataset using the modern Scanpy pipeline generally supports the conclusions of the original study while offering improved resolution and clarity. One of the most visually prominent results was the clear separation of neuronal and non-neuronal cells within the UMAP space.</p>
+                
+                <div class="comparison-box">
+                    <div class="original">
+                        <h4>Original Study (2015)</h4>
+                        <ul>
+                            <li>8 major cell types identified</li>
+                            <li>MHC-I expression in neurons</li>
+                            <li>t-SNE for visualization</li>
+                            <li>Hierarchical clustering</li>
+                        </ul>
+                    </div>
+                    <div class="current">
+                        <h4>Our Reanalysis</h4>
+                        <ul>
+                            <li>12 distinct clusters</li>
+                            <li>Confirmed MHC-I findings</li>
+                            <li>UMAP + Leiden clustering</li>
+                            <li>Better glial subtype resolution</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <p>The use of Leiden clustering, compared to the original hierarchical methods, offered more granular identification of subclusters, potentially corresponding to finer distinctions between astrocyte, oligodendrocyte, and microglial subtypes. We observed some divergence in subcluster composition that may reflect improvements in normalization and variable gene selection offered by Scanpy.</p>
+                
+                <div class="limitations">
+                    <h4>Limitations</h4>
+                    <p>While our analysis benefits from modern tools, we recognize several constraints:</p>
+                    <ul>
+                        <li>Limited metadata availability from original study</li>
+                        <li>Potential batch effects not accounted for in original data</li>
+                        <li>Comparison constrained by differences in clustering algorithms</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="downloads" class="section">
+            <h2><i class="fas fa-download"></i> Downloads</h2>
+            <div class="content-box">
+                <p>All processed data and analysis outputs are available for download:</p>
+                <div class="download-grid">
+                    <a href="data/gene_counts_matrix.csv" download class="download-card">
+                        <i class="fas fa-file-csv"></i>
+                        <h3>Gene Count Matrix</h3>
+                        <p>Raw expression counts (CSV, 15MB)</p>
+                    </a>
+                    <a href="data/processed_data.h5ad" download class="download-card">
+                        <i class="fas fa-file-code"></i>
+                        <h3>Processed Data</h3>
+                        <p>Scanpy AnnData object (H5AD, 28MB)</p>
+                    </a>
+                    <a href="data/analysis_script.ipynb" download class="download-card">
+                        <i class="fas fa-file-alt"></i>
+                        <h3>Analysis Notebook</h3>
+                        <p>Jupyter notebook with full pipeline (IPYNB)</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="github" class="section">
+            <h2><i class="fab fa-github"></i> Code Repository</h2>
+            <div class="content-box">
+                <div class="repo-card">
+                    <div class="repo-header">
+                        <i class="fab fa-github"></i>
+                        <h3>SRP-Darmanis-Reanalysis</h3>
+                    </div>
+                    <p>Complete codebase including:</p>
+                    <ul class="repo-features">
+                        <li><i class="fas fa-code-branch"></i> Data processing scripts</li>
+                        <li><i class="fas fa-chart-line"></i> Analysis pipeline</li>
+                        <li><i class="fas fa-laptop-code"></i> Website source code</li>
+                    </ul>
+                    <a href="https://github.com/akshaya09364/brain_project_website" target="_blank" class="github-link">
+                        <i class="fas fa-external-link-alt"></i> Visit Repository
+                    </a>
+                    <div class="repo-stats">
+                        <span><i class="fas fa-clock"></i> Last updated: April 2025</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                </div>
+                <div class="footer-col">
+                    <h3>Affiliation</h3>
+                    <p>University of Leicester<br>
+                    School of Biological Sciences<br>
+                    MSc Bioinformatics 2024-25</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Contact</h3>
+                    <p><a href="mailto:bioinfosrp@leicester.ac.uk"><i class="fas fa-envelope"></i> bioinfosrp@leicester.ac.uk</a></p>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 University of Leicester. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
