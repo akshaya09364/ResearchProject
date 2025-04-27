@@ -68,19 +68,19 @@
                         <div class="step-number">3</div>
                         <i class="fas fa-project-diagram"></i>
                         <h3>Dimensionality Reduction</h3>
-                        <p>PCA (50 components) followed by UMAP embedding (sc.tl.umap) for visualization</p>
+                        <p>PCA (50 components) followed by PCA  for visualization</p>
                     </div>
                     <div class="step">
                         <div class="step-number">4</div>
                         <i class="fas fa-object-group"></i>
                         <h3>Clustering</h3>
-                        <p>Leiden algorithm (sc.tl.leiden) for community detection in k-nearest neighbor graph</p>
+                        <p> Hierarchical clustering for community detection in k-nearest neighbor graph</p>
                     </div>
                 </div>
                 
                 <div class="methods-detail">
                     <h3>Technical Implementation</h3>
-                    <p>The analysis was performed using <strong> Seurat and Salmon </strong>. Key parameters:</p>
+                    <p>The analysis was performed using <strong> Seurat and Salmon modern reanalysis </strong>. Key parameters:</p>
                     <ul class="tech-specs">
                         <li><strong>Normalization:</strong> Total-count normalization per cell</li>
                         <li><strong>HVG Selection:</strong> Mean/dispersion method (sc.pp.highly_variable_genes)</li>
@@ -144,7 +144,7 @@
                     <div class="original">
                         <h4>Original Study (2015)</h4>
                         <ul>
-                            <li>8 major cell types identified</li>
+                            <li>6 major cell types identified</li>
                             <li>MHC-I expression in neurons</li>
                             <li>t-SNE for visualization</li>
                             <li>Hierarchical clustering</li>
