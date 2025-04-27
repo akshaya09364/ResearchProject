@@ -80,7 +80,7 @@
                 
                 <div class="methods-detail">
                     <h3>Technical Implementation</h3>
-                    <p>The analysis was performed using <strong>Scanpy 1.9.0</strong> in a Python 3.10 environment. Key parameters:</p>
+                    <p>The analysis was performed using <strong> Seurat and Salmon </strong>. Key parameters:</p>
                     <ul class="tech-specs">
                         <li><strong>Normalization:</strong> Total-count normalization per cell</li>
                         <li><strong>HVG Selection:</strong> Mean/dispersion method (sc.pp.highly_variable_genes)</li>
@@ -138,7 +138,7 @@
         <section id="discussion" class="section">
             <h2><i class="fas fa-comments"></i> Discussion</h2>
             <div class="content-box">
-                <p>Our reanalysis of the Darmanis et al. dataset using the modern Scanpy pipeline generally supports the conclusions of the original study while offering improved resolution and clarity. One of the most visually prominent results was the clear separation of neuronal and non-neuronal cells within the UMAP space.</p>
+                <p>Our reanalysis of the Darmanis et al. dataset using the modern Salmon and Seurat pipeline generally supports the conclusions of the original study while offering improved resolution and clarity. One of the most visually prominent results was the clear separation of neuronal and non-neuronal cells within the UMAP space.</p>
                 
                 <div class="comparison-box">
                     <div class="original">
@@ -161,7 +161,7 @@
                     </div>
                 </div>
                 
-                <p>The use of Leiden clustering, compared to the original hierarchical methods, offered more granular identification of subclusters, potentially corresponding to finer distinctions between astrocyte, oligodendrocyte, and microglial subtypes. We observed some divergence in subcluster composition that may reflect improvements in normalization and variable gene selection offered by Scanpy.</p>
+                <p>The use of Leiden clustering, compared to the original hierarchical methods, offered more granular identification of subclusters, potentially corresponding to finer distinctions between astrocyte, oligodendrocyte, and microglial subtypes. We observed some divergence in subcluster composition that may reflect improvements in normalization and variable gene selection offered by Seurat and Salmon.</p>
                 
                 <div class="limitations">
                     <h4>Limitations</h4>
@@ -188,7 +188,7 @@
                     <a href="data/processed_data.h5ad" download class="download-card">
                         <i class="fas fa-file-code"></i>
                         <h3>Processed Data</h3>
-                        <p>Scanpy AnnData object (H5AD, 28MB)</p>
+                        <p>Salmon and Seurat </p>
                     </a>
                     <a href="data/analysis_script.ipynb" download class="download-card">
                         <i class="fas fa-file-alt"></i>
